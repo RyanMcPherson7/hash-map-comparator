@@ -704,25 +704,14 @@ class Avltree{
     }
 
 
-
-
-// =========================================================
-// =========================================================
-// =========================================================
-// =========================================================
-// =========================================================
-// =========================================================
-// =========================================================
-// =========================================================
-// =========================================================
-
 //Add your peer's code for the AVL Tree
 
 class OrderedMap 
 {
     private:
         //create an object of the AVL Tree which your peer implemented 
-        Avltree data;
+        // Avltree data;
+        Avltree* data;
 
     public:
         OrderedMap();
@@ -736,37 +725,34 @@ class OrderedMap
 
 OrderedMap::OrderedMap()
 {
-    data = Avltree();
+    data = new Avltree();
 }
 
 OrderedMap::~OrderedMap()
 {
-    //code here
+    delete data;
 }
 
 bool OrderedMap::insert(const std::string &ID, std::string &NAME)
 {
-    return data.insert(NAME, stoi(ID)); 
+    return data->insert(NAME, stoi(ID)); 
 }
 
 std::string OrderedMap::search(const std::string &ID)
 {
-    return data.searchID(stoi(ID));
+    return data->searchID(stoi(ID));
 }
 
 std::string OrderedMap::traverse()
 {
-    return data.printPreOrder();
+    return data->printPreOrder();
 }
 
 bool OrderedMap::remove(const std::string ID)
 {
-    return data.remove(stoi(ID));
+    return data->remove(stoi(ID));
 }
 
-
-
-// ==========================================================
 //Do not change main() 
 int main()
 {
@@ -800,4 +786,3 @@ int main()
 
     return 0;
 }
-
