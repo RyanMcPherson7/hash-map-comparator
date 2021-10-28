@@ -115,7 +115,7 @@ class UnorderedMap
 
 
 ////////////////////////////////////////////
-// UNORDERED MAP CLASS FUNCTIONS
+// UOM CONSTRUCTOR / DESTRUCTOR
 ////////////////////////////////////////////
 UnorderedMap::UnorderedMap(unsigned int bucketCount, double loadFactor) {
     this->bucketCount = bucketCount;
@@ -131,6 +131,10 @@ UnorderedMap::~UnorderedMap() {
     delete [] table;
 }
 
+
+////////////////////////////////////////////
+// UOM ITERATORS
+////////////////////////////////////////////
 UnorderedMap::Iterator UnorderedMap::begin() const {
     Iterator beginIter(*this);
 
@@ -161,7 +165,9 @@ UnorderedMap::Iterator UnorderedMap::end() const {
     return endIter;
 }
 
-
+////////////////////////////////////////////
+// UOM [] OPERATOR (INSERT / GET)
+////////////////////////////////////////////
 string& UnorderedMap::operator[] (string const& key) {
 
     unsigned int hashCode = hashFunction(key.c_str(), bucketCount);
@@ -210,7 +216,9 @@ string& UnorderedMap::operator[] (string const& key) {
     return slot->next->data.second;
 }
 
-
+////////////////////////////////////////////
+// UOM REHASH MAP
+////////////////////////////////////////////
 void UnorderedMap::rehash() {
 
     // copying old data
@@ -252,6 +260,9 @@ void UnorderedMap::rehash() {
     }
 }
 
+////////////////////////////////////////////
+// UOM REMOVE KEY
+////////////////////////////////////////////
 void UnorderedMap::remove(string const& key) {
 
     unsigned int hashCode = hashFunction(key.c_str(), bucketCount);
@@ -280,6 +291,9 @@ void UnorderedMap::remove(string const& key) {
     }
 }
 
+////////////////////////////////////////////
+// UOM GETTERS
+////////////////////////////////////////////
 unsigned int UnorderedMap::size() {
     return numKeys;
 }
