@@ -47,15 +47,15 @@ class UnorderedMap
 {
     private: 
         unsigned int numKeys;
-        // unsigned int bucketCount;
+        unsigned int bucketCount;
         double LF;
-        // ListNode** table;
+        ListNode** table;
 
         bool idValid(const string& id);
         bool nameValid(const string& name);
     public:
-        unsigned int bucketCount;
-        ListNode** table;
+        // unsigned int bucketCount;
+        // ListNode** table;
 
         class Iterator;
         UnorderedMap(unsigned int bucketCount, double loadFactor);
@@ -70,17 +70,17 @@ class UnorderedMap
 
         class Iterator 
         {
+            private:
+                ListNode** iterTable;
+                ListNode* pointer;
             public:
-                //this constructor does not need to be a default constructor;
-                //the parameters for this constructor are up to your discretion.
-                //hint: you may need to pass in an UnorderedMap object.
-                // Iterator() { }
-                // Iterator& operator=(Iterator const& rhs) { }
-                // Iterator& operator++() { }
-                // bool operator!=(Iterator const& rhs) { }
-                // bool operator==(Iterator const& rhs) { }
-                // pair<string, string> operator*() const { }
-                // friend class UnorderedMap;
+                Iterator(ListNode** table) : iterTable(table), pointer(nullptr) {}
+                Iterator& operator=(Iterator const& rhs) { this->pointer = rhs.pointer; }
+                // Iterator& operator++() {  }
+                bool operator!=(Iterator const& rhs) { return this->pointer != rhs.pointer; }
+                bool operator==(Iterator const& rhs) { return this->pointer == rhs.pointer; }
+                pair<string, string> operator*() const { return pointer->data; }
+                friend class UnorderedMap;
         };
 };
 
@@ -136,15 +136,33 @@ UnorderedMap::~UnorderedMap() {
     delete [] table;
 }
 
-// UnorderedMap::Iterator UnorderedMap::begin() const 
-// {
+UnorderedMap::Iterator UnorderedMap::begin() const {
+    Iterator beginIter(table);
 
-// }
+    for (int i = 0; i < bucketCount; i++)
+        if (table[i]) {
+            beginIter.pointer = table[i];
+            break;
+        }
 
-// UnorderedMap::Iterator UnorderedMap::end() const 
-// {
+    return beginIter;
+}
 
-// }
+UnorderedMap::Iterator UnorderedMap::end() const {
+    Iterator endIter(table);
+
+    for (int i = bucketCount - 1; i >= 0; i--)
+        if (table[i]) {
+            ListNode* slot = table[i];
+
+            while (slot->next)
+                slot = slot->next;
+
+            endIter.pointer = slot;
+        }
+
+    return endIter;
+}
 
 
 string& UnorderedMap::operator[] (string const& key) {
@@ -315,7 +333,7 @@ int main() {
     for (int i = 0; i < 2000; i++) {
         map[to_string(i)] = "nice";
     }
-    cout << map.bucketCount << endl;
+    // cout << map.bucketCount << endl;
     map.remove("234");
     map["234"] = "pls work";
 
