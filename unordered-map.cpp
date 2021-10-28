@@ -144,32 +144,50 @@ UnorderedMap::~UnorderedMap() {
 
 // }
 
+
+// pretty sure everything works however the element never
+// gets inserted into the table (likely something to do with 
+// lvalues an rvalues) (or something to do with implimenting
+// [] overload and returning the address of the value we 
+// wish to overwrite)
 string& UnorderedMap::operator[] (string const& key) {
 
     unsigned int hashCode = hashFunction(key.c_str(), bucketCount);
+
+    // inserting if bucket is empty
+    if (!table[hashCode]) {
+        numKeys++;
+        table[hashCode] = new ListNode(key, "@@@");
+        return table[hashCode]->data.second;
+    }
+    
     ListNode* slot = table[hashCode];
 
-    // looking to see if key already in map
+    // key already in map
     while (slot) {
         if (slot->data.first == key) {
-            cout << "already in map" << endl;
             return slot->data.second;
         }
+        
+        // at tail node
+        if (!slot->next) 
+            break;
         
         slot = slot->next; 
     }
 
-    // inserting key
+    // inserting key to back
     numKeys++;
-    cout << "adding to map" << endl;
-    slot = new ListNode(key, "5555");
+    slot->next = new ListNode(key, "###");
+
+    
 
     // rehashing if load factor surpassed
     // if ((float)numKeys / (float)bucketCount >= LF)
     //     rehash();
 
     // this slot's location will change after rehashing
-    return slot->data.second;
+    return slot->next->data.second;
 }
 
 // void UnorderedMap::rehash() 
@@ -213,20 +231,39 @@ int main() {
     
     UnorderedMap map(1, 0.75f);
 
-    map.table[0] = new ListNode("12341234", "da baby");
-    map.table[0]->next = new ListNode("44444444", "da mihir");
-    map.table[0]->next->next = new ListNode("78787878", "da bobby");
+    // map.table[0] = new ListNode("12341234", "da baby");
+    // map.table[0]->next = new ListNode("44444444", "da mihir");
+    // map.table[0]->next->next = new ListNode("78787878", "da bobby");
+    map["77777777"] = "54";
+    map["88888888"] = "other val";
+    map["99999999"] = "additional name";
+    map["99999999"] = "3425345";
+    cout << map["77777777"] << endl;
+    cout << map["88888888"] << endl;
+    cout << map["99999999"] << endl;
 
-    map["12341234"];
 
-    // cout << map["12341234"] << endl;
 
-    // cout << map.table[0]->data.first;
+    while (map.table[0]) {
+        cout << map.table[0]->data.second << endl;
+        map.table[0] = map.table[0]->next;
+    }
+
+    
+
+    
+
 
 
     return 0;
 }
 
+
+
+
+////////////////////////////////////////////
+// MAIN TO PARSE INPUT COMMANDS
+////////////////////////////////////////////
 // //Do not change main() 
 // int main()
 // {
