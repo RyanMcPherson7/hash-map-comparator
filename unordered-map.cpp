@@ -50,13 +50,7 @@ class UnorderedMap
         unsigned int bucketCount;
         double LF;
         ListNode** table;
-
-        bool idValid(const string& id);
-        bool nameValid(const string& name);
     public:
-        // unsigned int bucketCount;
-        // ListNode** table;
-
         class Iterator;
         UnorderedMap(unsigned int bucketCount, double loadFactor);
         ~UnorderedMap();
@@ -119,40 +113,6 @@ class UnorderedMap
         };
 };
 
-////////////////////////////////////////////
-// CHECKING VALIDITY OF INPUT
-////////////////////////////////////////////
-bool UnorderedMap::idValid(const string& id) {
-
-    // if id is not 8 digits
-    if (id.length() != 8) {
-        // cout << "unsuccessful" << endl;
-        return false;
-    }
-
-    // if id contains non-numbers
-    for (int i = 0; i < id.length(); i++) {
-        if (id[i] < '0' || id[i] > '9') {
-            // cout << "unsuccessful" << endl;
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool UnorderedMap::nameValid(const string& name) {
-
-    // if name contains non-letters
-    for (int i = 0; i < name.length(); i++) {
-        if (!(name[i] >= 'a' && name[i] <= 'z') && !(name[i] >= 'A' && name[i] <= 'Z') && name[i] != ' ') {
-            // cout << "unsuccessful" << endl;
-            return false;
-        }
-    }
-
-    return true;
-}
 
 ////////////////////////////////////////////
 // UNORDERED MAP CLASS FUNCTIONS
@@ -327,59 +287,6 @@ unsigned int UnorderedMap::size() {
 double UnorderedMap::loadFactor() {
     return (double)numKeys / (double)bucketCount;
 }
-
-
-
-
-
-
-
-
-
-
-// ================================================================
-// ================================================================
-// ================================================================
-// ================================================================
-// ================================================================
-// ================================================================
-// ================================================================
-
-// int main() {
-    
-//     UnorderedMap map(1, 0.75f);
-
-//     // map.table[0] = new ListNode("12341234", "da baby");
-//     // map.table[0]->next = new ListNode("44444444", "da mihir");
-//     // map.table[0]->next->next = new ListNode("78787878", "da bobby");
-
-//     // map["77777777"] = "54";
-//     // map["88888888"] = "other val";
-//     // map["99999999"] = "additional name";
-//     // map["99999999"] = "3425345";
-//     // map["12341234"] = "fasdf";
-
-//     // cout << map["77777777"] << endl;
-//     // cout << map["88888888"] << endl;
-//     // cout << map["99999999"] << endl;
-//     // cout << map["12341234"] << endl;
-
-
-//     for (int i = 0; i < 2000; i++) {
-//         map[to_string(i)] = "nice";
-//     }
-//     // cout << map.bucketCount << endl;
-//     map.remove("234");
-//     map["234"] = "pls work";
-
-//     cout << map.size() << endl;
-//     cout << map["234"] << endl;
-
-
-//     return 0;
-// }
-
-
 
 
 ////////////////////////////////////////////
