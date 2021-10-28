@@ -36,7 +36,7 @@ unsigned int hashFunction(char const *key, int table_size) {
     // switching 32nd bit to zero
     hashCode &= ~(1 << 31);
 
-    return hashCode % 100;
+    return hashCode % table_size;
 }
 
 ////////////////////////////////////////////
@@ -48,11 +48,13 @@ class UnorderedMap
         unsigned int numKeys;
         unsigned int bucketCount;
         double LF;
-        ListNode* table[];
+        // ListNode** table;
 
         bool idValid(const string& id);
         bool nameValid(const string& name);
     public:
+        ListNode** table;
+
         class Iterator;
         UnorderedMap(unsigned int bucketCount, double loadFactor);
         ~UnorderedMap();
@@ -80,19 +82,21 @@ class UnorderedMap
         };
 };
 
-// returns true if input id is valid
+////////////////////////////////////////////
+// CHECKING VALIDITY OF INPUT
+////////////////////////////////////////////
 bool UnorderedMap::idValid(const string& id) {
 
     // if id is not 8 digits
     if (id.length() != 8) {
-        cout << "unsuccessful" << endl;
+        // cout << "unsuccessful" << endl;
         return false;
     }
 
     // if id contains non-numbers
     for (int i = 0; i < id.length(); i++) {
         if (id[i] < '0' || id[i] > '9') {
-            cout << "unsuccessful" << endl;
+            // cout << "unsuccessful" << endl;
             return false;
         }
     }
@@ -100,13 +104,12 @@ bool UnorderedMap::idValid(const string& id) {
     return true;
 }
 
-// returns true if input name is valid
 bool UnorderedMap::nameValid(const string& name) {
 
     // if name contains non-letters
     for (int i = 0; i < name.length(); i++) {
         if (!(name[i] >= 'a' && name[i] <= 'z') && !(name[i] >= 'A' && name[i] <= 'Z') && name[i] != ' ') {
-            cout << "unsuccessful" << endl;
+            // cout << "unsuccessful" << endl;
             return false;
         }
     }
@@ -114,15 +117,22 @@ bool UnorderedMap::nameValid(const string& name) {
     return true;
 }
 
-// UnorderedMap::UnorderedMap(unsigned int bucketCount, double loadFactor) 
-// {
+////////////////////////////////////////////
+// UNORDERED MAP CLASS FUNCTIONS
+////////////////////////////////////////////
+UnorderedMap::UnorderedMap(unsigned int bucketCount, double loadFactor) {
+    this->bucketCount = bucketCount;
+    LF = loadFactor;
+    numKeys = 0;
+    table = new ListNode*[bucketCount];
 
-// }
+    for (int i = 0; i < bucketCount; i++)
+        table[i] = nullptr;
+}
 
-// UnorderedMap::~UnorderedMap() 
-// {
-
-// }
+UnorderedMap::~UnorderedMap() {
+    delete [] table;
+}
 
 // UnorderedMap::Iterator UnorderedMap::begin() const 
 // {
@@ -134,10 +144,33 @@ bool UnorderedMap::nameValid(const string& name) {
 
 // }
 
-// string& UnorderedMap::operator[] (string const& key) 
-// {
+string& UnorderedMap::operator[] (string const& key) {
 
-// }
+    unsigned int hashCode = hashFunction(key.c_str(), bucketCount);
+    ListNode* slot = table[hashCode];
+
+    // looking to see if key already in map
+    while (slot) {
+        if (slot->data.first == key) {
+            cout << "already in map" << endl;
+            return slot->data.second;
+        }
+        
+        slot = slot->next; 
+    }
+
+    // inserting key
+    numKeys++;
+    cout << "adding to map" << endl;
+    slot = new ListNode(key, "5555");
+
+    // rehashing if load factor surpassed
+    // if ((float)numKeys / (float)bucketCount >= LF)
+    //     rehash();
+
+    // this slot's location will change after rehashing
+    return slot->data.second;
+}
 
 // void UnorderedMap::rehash() 
 // {
@@ -149,15 +182,13 @@ bool UnorderedMap::nameValid(const string& name) {
 
 // }
 
-// unsigned int UnorderedMap::size()
-// {
+unsigned int UnorderedMap::size() {
+    return numKeys;
+}
 
-// }
-
-// double UnorderedMap::loadFactor()
-// {
-
-// }
+double UnorderedMap::loadFactor() {
+    return LF;
+}
 
 //implement other operators in Iterator class
 
@@ -180,7 +211,17 @@ bool UnorderedMap::nameValid(const string& name) {
 
 int main() {
     
-    cout << hashFunction("Gator", 100);
+    UnorderedMap map(1, 0.75f);
+
+    map.table[0] = new ListNode("12341234", "da baby");
+    map.table[0]->next = new ListNode("44444444", "da mihir");
+    map.table[0]->next->next = new ListNode("78787878", "da bobby");
+
+    map["12341234"];
+
+    // cout << map["12341234"] << endl;
+
+    // cout << map.table[0]->data.first;
 
 
     return 0;
