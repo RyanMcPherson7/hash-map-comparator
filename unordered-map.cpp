@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <iomanip>
+#include <stack>
 using namespace std;
 
 ////////////////////////////////////////////
@@ -46,13 +47,14 @@ class UnorderedMap
 {
     private: 
         unsigned int numKeys;
-        unsigned int bucketCount;
+        // unsigned int bucketCount;
         double LF;
         // ListNode** table;
 
         bool idValid(const string& id);
         bool nameValid(const string& name);
     public:
+        unsigned int bucketCount;
         ListNode** table;
 
         class Iterator;
@@ -145,11 +147,6 @@ UnorderedMap::~UnorderedMap() {
 // }
 
 
-// pretty sure everything works however the element never
-// gets inserted into the table (likely something to do with 
-// lvalues an rvalues) (or something to do with implimenting
-// [] overload and returning the address of the value we 
-// wish to overwrite)
 string& UnorderedMap::operator[] (string const& key) {
 
     unsigned int hashCode = hashFunction(key.c_str(), bucketCount);
@@ -157,13 +154,13 @@ string& UnorderedMap::operator[] (string const& key) {
     // inserting if bucket is empty
     if (!table[hashCode]) {
         numKeys++;
-        table[hashCode] = new ListNode(key, "@@@");
+        table[hashCode] = new ListNode(key, "");
         return table[hashCode]->data.second;
     }
     
     ListNode* slot = table[hashCode];
 
-    // key already in map
+    // if key already in map
     while (slot) {
         if (slot->data.first == key) {
             return slot->data.second;
@@ -178,22 +175,67 @@ string& UnorderedMap::operator[] (string const& key) {
 
     // inserting key to back
     numKeys++;
-    slot->next = new ListNode(key, "###");
-
-    
+    slot->next = new ListNode(key, "$$$");
 
     // rehashing if load factor surpassed
-    // if ((float)numKeys / (float)bucketCount >= LF)
-    //     rehash();
+    if ((float)numKeys / (float)bucketCount >= LF) {
+        rehash();
 
-    // this slot's location will change after rehashing
+        // updating latest added value
+        unsigned int newHashCode = hashFunction(key.c_str(), bucketCount);
+        ListNode* updNode = table[newHashCode];
+        while (updNode) {
+            if (updNode->data.first == key)
+                return updNode->data.second;
+
+            updNode = updNode->next;
+        }
+    }
+
     return slot->next->data.second;
 }
 
-// void UnorderedMap::rehash() 
-// {
 
-// }
+void UnorderedMap::rehash() {
+
+    // copying old data
+    stack<pair<string, string>> mem;
+    for (int i = 0; i < bucketCount; i++) {
+        ListNode* slot = table[i];
+        while (slot) {
+            mem.push(slot->data);
+            slot = slot->next;
+        }
+    }
+
+    // updating new values
+    delete [] table;
+    bucketCount *= 2;
+    table = new ListNode*[bucketCount];
+    for (int i = 0; i < bucketCount; i++)
+        table[i] = nullptr;
+
+    // remapping old data
+    while (!mem.empty()) {
+
+        string key = mem.top().first;
+        string value = mem.top().second;
+        unsigned int hashCode = hashFunction(key.c_str(), bucketCount);
+        
+        if (!table[hashCode]) {
+            table[hashCode] = new ListNode(key, value);
+        }
+        else {
+            ListNode* slot = table[hashCode];
+            while (slot->next) 
+                slot = slot->next;
+
+            slot->next = new ListNode(key, value);
+        }
+
+        mem.pop();
+    }
+}
 
 // void UnorderedMap::remove(string const& key) 
 // {
@@ -234,20 +276,31 @@ int main() {
     // map.table[0] = new ListNode("12341234", "da baby");
     // map.table[0]->next = new ListNode("44444444", "da mihir");
     // map.table[0]->next->next = new ListNode("78787878", "da bobby");
-    map["77777777"] = "54";
-    map["88888888"] = "other val";
-    map["99999999"] = "additional name";
-    map["99999999"] = "3425345";
-    cout << map["77777777"] << endl;
-    cout << map["88888888"] << endl;
-    cout << map["99999999"] << endl;
+
+    // map["77777777"] = "54";
+    // map["88888888"] = "other val";
+    // map["99999999"] = "additional name";
+    // map["99999999"] = "3425345";
+    // map["12341234"] = "fasdf";
+
+    // cout << map["77777777"] << endl;
+    // cout << map["88888888"] << endl;
+    // cout << map["99999999"] << endl;
+    // cout << map["12341234"] << endl;
 
 
-
-    while (map.table[0]) {
-        cout << map.table[0]->data.second << endl;
-        map.table[0] = map.table[0]->next;
+    for (int i = 0; i < 2000; i++) {
+        map[to_string(i)] = "nice";
     }
+    cout << map.bucketCount << endl;
+    cout << map["234"] << endl;
+
+
+
+    // while (map.table[0]) {
+    //     cout << map.table[0]->data.second << endl;
+    //     map.table[0] = map.table[0]->next;
+    // }
 
     
 
