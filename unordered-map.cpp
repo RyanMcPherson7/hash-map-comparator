@@ -4,7 +4,18 @@
 #include <iomanip>
 using namespace std;
 
+////////////////////////////////////////////
+// LINKED LIST NODE CLASS
+////////////////////////////////////////////
+struct ListNode {
+    pair<string, string> data;
+    ListNode* next;
+    ListNode(const string& id, const string& name) : data(id, name), next(nullptr) {}
+};
 
+////////////////////////////////////////////
+// HASH FUNCTION 
+////////////////////////////////////////////
 unsigned int hashFunction(char const *key, int table_size) {
 
     unsigned int hashCode = 0;
@@ -22,29 +33,25 @@ unsigned int hashFunction(char const *key, int table_size) {
         hashCode ^= b;
     }
 
-    // switching highest bit off (to zero)
-    int n = 0; 
-    int copy = hashCode;
-    while (copy) {
-        copy /= 2;
-        n++;
-    }
-
-    hashCode &= ~(1 << n);
+    // switching 32nd bit to zero
+    hashCode &= ~(1 << 31);
 
     return hashCode % 100;
 }
 
+////////////////////////////////////////////
+// UNORDERED MAP CLASS
+////////////////////////////////////////////
 class UnorderedMap 
 {
-    private:
-        //define your data structure here
-        //define other attributes e.g. bucket count, maximum load factor, size of table, etc. 
-        unsigned int count;
+    private: 
+        unsigned int numKeys;
         unsigned int bucketCount;
         double LF;
-        vector<pair<string, string>> table[];
+        ListNode* table[];
 
+        bool idValid(const string& id);
+        bool nameValid(const string& name);
     public:
         class Iterator;
         UnorderedMap(unsigned int bucketCount, double loadFactor);
@@ -72,6 +79,40 @@ class UnorderedMap
                 // friend class UnorderedMap;
         };
 };
+
+// returns true if input id is valid
+bool UnorderedMap::idValid(const string& id) {
+
+    // if id is not 8 digits
+    if (id.length() != 8) {
+        cout << "unsuccessful" << endl;
+        return false;
+    }
+
+    // if id contains non-numbers
+    for (int i = 0; i < id.length(); i++) {
+        if (id[i] < '0' || id[i] > '9') {
+            cout << "unsuccessful" << endl;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// returns true if input name is valid
+bool UnorderedMap::nameValid(const string& name) {
+
+    // if name contains non-letters
+    for (int i = 0; i < name.length(); i++) {
+        if (!(name[i] >= 'a' && name[i] <= 'z') && !(name[i] >= 'A' && name[i] <= 'Z') && name[i] != ' ') {
+            cout << "unsuccessful" << endl;
+            return false;
+        }
+    }
+
+    return true;
+}
 
 // UnorderedMap::UnorderedMap(unsigned int bucketCount, double loadFactor) 
 // {
@@ -139,7 +180,7 @@ class UnorderedMap
 
 int main() {
     
-    cout << hashFunction("33341253", 100);
+    cout << hashFunction("Gator", 100);
 
 
     return 0;
