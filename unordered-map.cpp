@@ -175,7 +175,7 @@ string& UnorderedMap::operator[] (string const& key) {
 
     // inserting key to back
     numKeys++;
-    slot->next = new ListNode(key, "$$$");
+    slot->next = new ListNode(key, "");
 
     // rehashing if load factor surpassed
     if ((float)numKeys / (float)bucketCount >= LF) {
@@ -237,10 +237,33 @@ void UnorderedMap::rehash() {
     }
 }
 
-// void UnorderedMap::remove(string const& key) 
-// {
+void UnorderedMap::remove(string const& key) {
 
-// }
+    unsigned int hashCode = hashFunction(key.c_str(), bucketCount);
+
+    if (!table[hashCode])
+        return;
+
+    // if key is head of list 
+    if (table[hashCode]->data.first == key) {
+        delete table[hashCode];
+        table[hashCode] = nullptr;
+        numKeys--;
+    }
+    // removing from body of list
+    else {
+        ListNode* slot = table[hashCode];
+        while (slot->next && slot->next->data.first != key) 
+            slot = slot->next;
+
+        if (slot->next) {
+            ListNode* temp = slot->next;
+            slot->next = temp->next;
+            delete temp;
+            numKeys--;
+        }
+    }
+}
 
 unsigned int UnorderedMap::size() {
     return numKeys;
@@ -293,6 +316,10 @@ int main() {
         map[to_string(i)] = "nice";
     }
     cout << map.bucketCount << endl;
+    map.remove("234");
+    map["234"] = "pls work";
+
+    cout << map.size() << endl;
     cout << map["234"] << endl;
 
 
