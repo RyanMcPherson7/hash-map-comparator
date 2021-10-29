@@ -69,7 +69,7 @@ class UnorderedMap
                 ListNode* pointer;
                 unsigned int bucketIndex;
             public:
-                Iterator(UnorderedMap map) : map(&map), pointer(nullptr), bucketIndex(0) {}
+                Iterator(const UnorderedMap* map) : map(map), pointer(nullptr), bucketIndex(0) {}
                 Iterator& operator=(Iterator const& rhs) { 
                     pointer = rhs.pointer;
                     return *this;  
@@ -139,13 +139,13 @@ UnorderedMap::~UnorderedMap() {
 // UOM ITERATORS
 ////////////////////////////////////////////
 UnorderedMap::Iterator UnorderedMap::begin() const {
-    UnorderedMap::Iterator beginIter(*this);
+    UnorderedMap::Iterator beginIter(this);
 
     // for some bizzar reason, table[0] is not null despite not containing any items
     for (int i = 0; i < bucketCount; i++)
         if (table[i] != nullptr) {
             beginIter.bucketIndex = i;
-            beginIter.pointer = table[i];
+            beginIter.pointer = table[i];   
             break;
         }
 
@@ -154,7 +154,7 @@ UnorderedMap::Iterator UnorderedMap::begin() const {
 }
 
 UnorderedMap::Iterator UnorderedMap::end() const {
-    UnorderedMap::Iterator endIter(*this);
+    UnorderedMap::Iterator endIter(this);
 
     for (int i = bucketCount - 1; i >= 0; i--)
         if (table[i]) {
@@ -319,17 +319,22 @@ double UnorderedMap::loadFactor() {
 
 int main() {
 
-    UnorderedMap map(1, 44.0);
+    UnorderedMap map(1, 0.75);
     map["key1"] = "val1";
     // map.remove("key1");
-    // map["key2"] = "val2";
-    // map["key3"] = "val3";
-    // map["key4"] = "val4";
+    map["key2"] = "val2";
+    map["key3"] = "val3";
+    map["key4"] = "val4";
     
 
 
     
     UnorderedMap::Iterator iter = map.begin();
+    ++iter;
+
+    cout << (*iter).first << endl;
+
+
     // UnorderedMap::Iterator iter2 = map.begin();
     // ++iter;
 
