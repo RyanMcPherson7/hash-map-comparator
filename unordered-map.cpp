@@ -69,15 +69,32 @@ class UnorderedMap
                 ListNode* pointer;
                 unsigned int bucketIndex;
             public:
-                
                 Iterator(UnorderedMap map) : map(&map), pointer(nullptr), bucketIndex(0) {}
                 Iterator& operator=(Iterator const& rhs) { 
-                    this->pointer = rhs.pointer;
+                    pointer = rhs.pointer;
                     return *this;  
                 }
+
+                // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                // IDK THIS IS PROBABLY WRONG PLS FIX ME !!!!!!
+                // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
                 Iterator& operator++() { 
 
-                    // reached end() iterator
+                    // move to right node
+                    if (pointer->next) 
+                        pointer = pointer->next;
+                    else {
+                        // visit next filled bucket
+                        for (int i = bucketIndex + 1; i < map->bucketCount; i++)
+                            if (map->table[i]) {
+                                pointer = map->table[i];
+                                bucketIndex = i;
+                                return *this;
+                            }
+                    }
+
+                    // reached end iterator
                     if (!pointer->next && bucketIndex == map->bucketCount - 1) {
                         for (int i = map->bucketCount - 1; i >= 0; i--)
                             if (map->table[i]) {
@@ -87,20 +104,6 @@ class UnorderedMap
                                     slot = slot->next;
 
                                 pointer = slot;
-
-                                return *this;
-                            }
-                    }
-
-                    if (pointer->next) 
-                        pointer = pointer->next;
-                    else {
-                        // visit next filled bucket
-                        for (int i = bucketIndex + 1; i < map->bucketCount; i++)
-                            if (map->table[i]) {
-                                pointer = map->table[i];
-                                bucketIndex = i;
-                                break;
                             }
                     }
 
@@ -136,20 +139,22 @@ UnorderedMap::~UnorderedMap() {
 // UOM ITERATORS
 ////////////////////////////////////////////
 UnorderedMap::Iterator UnorderedMap::begin() const {
-    Iterator beginIter(*this);
+    UnorderedMap::Iterator beginIter(*this);
 
+    // for some bizzar reason, table[0] is not null despite not containing any items
     for (int i = 0; i < bucketCount; i++)
-        if (table[i]) {
+        if (table[i] != nullptr) {
             beginIter.bucketIndex = i;
             beginIter.pointer = table[i];
             break;
         }
 
+
     return beginIter;
 }
 
 UnorderedMap::Iterator UnorderedMap::end() const {
-    Iterator endIter(*this);
+    UnorderedMap::Iterator endIter(*this);
 
     for (int i = bucketCount - 1; i >= 0; i--)
         if (table[i]) {
@@ -231,7 +236,7 @@ void UnorderedMap::rehash() {
         }
     }
 
-    // updating new values
+    // updating new map variables
     delete [] table;
     bucketCount *= 2;
     table = new ListNode*[bucketCount];
@@ -303,64 +308,95 @@ double UnorderedMap::loadFactor() {
 }
 
 
-////////////////////////////////////////////
-// MAIN TO PARSE INPUT COMMANDS
-////////////////////////////////////////////
-//Do not change main() 
-int main()
-{
-    int lines = 0, buckets = 0;
-    double maxLoadFactor = 0.0;
-    string command = "", ufid = "", name = "", key = "";
-    cin >> lines >> buckets >> maxLoadFactor;
-    UnorderedMap myMap = UnorderedMap(buckets, maxLoadFactor);
-    while(lines--)
-    {
-        cin >> command;
-        if(command == "hash")
-        {
-            cin >> key;
-            const char* convertedKey = key.c_str();
-            cout << hashFunction(convertedKey, buckets) << "\n";
-        }
-        else if(command == "insert") 
-        {
-            cin >> ufid >> name;
-            myMap[ufid] = name;
-        }
-        else if(command == "size") 
-        {
-            cout << myMap.size() <<"\n";
-        }
-        else if(command == "load") 
-        {
-            cout << fixed << setprecision(2) << myMap.loadFactor() <<"\n";
-        }
-        else if(command == "search")
-        {
-            cin >> ufid;
-            cout << myMap[ufid] << "\n";
-        }
-        else if(command == "traverse")
-        {
-            for (UnorderedMap::Iterator iter = myMap.begin(); iter != myMap.end(); ++iter) 
-            {
-                cout << (*iter).first << " " << (*iter).second << "\n";
-            }
 
-            /* This should also work
-                for (auto tableEntry: myMap) 
-                {
-                    cout << tableEntry.first << " " << tableEntry.second << "\n";
-                }
-            */
-        }
-        else if(command == "remove")
-        {
-            cin >> ufid;
-            myMap.remove(ufid);
-        }  
-    }
+
+// ====================================================
+// ====================================================
+// ====================================================
+// ====================================================
+// ====================================================
+// ====================================================
+
+int main() {
+
+    UnorderedMap map(1, 44.0);
+    map["key1"] = "val1";
+    // map.remove("key1");
+    // map["key2"] = "val2";
+    // map["key3"] = "val3";
+    // map["key4"] = "val4";
+    
+
+
+    
+    UnorderedMap::Iterator iter = map.begin();
+    // UnorderedMap::Iterator iter2 = map.begin();
+    // ++iter;
+
+    
 
     return 0;
 }
+
+
+
+////////////////////////////////////////////
+// MAIN TO PARSE INPUT COMMANDS
+////////////////////////////////////////////
+// int main()
+// {
+//     int lines = 0, buckets = 0;
+//     double maxLoadFactor = 0.0;
+//     string command = "", ufid = "", name = "", key = "";
+//     cin >> lines >> buckets >> maxLoadFactor;
+//     UnorderedMap myMap = UnorderedMap(buckets, maxLoadFactor);
+//     while(lines--)
+//     {
+//         cin >> command;
+//         if(command == "hash")
+//         {
+//             cin >> key;
+//             const char* convertedKey = key.c_str();
+//             cout << hashFunction(convertedKey, buckets) << "\n";
+//         }
+//         else if(command == "insert") 
+//         {
+//             cin >> ufid >> name;
+//             myMap[ufid] = name;
+//         }
+//         else if(command == "size") 
+//         {
+//             cout << myMap.size() <<"\n";
+//         }
+//         else if(command == "load") 
+//         {
+//             cout << fixed << setprecision(2) << myMap.loadFactor() <<"\n";
+//         }
+//         else if(command == "search")
+//         {
+//             cin >> ufid;
+//             cout << myMap[ufid] << "\n";
+//         }
+//         else if(command == "traverse")
+//         {
+//             for (UnorderedMap::Iterator iter = myMap.begin(); iter != myMap.end(); ++iter) 
+//             {
+//                 cout << (*iter).first << " " << (*iter).second << "\n";
+//             }
+
+//             /* This should also work
+//                 for (auto tableEntry: myMap) 
+//                 {
+//                     cout << tableEntry.first << " " << tableEntry.second << "\n";
+//                 }
+//             */
+//         }
+//         else if(command == "remove")
+//         {
+//             cin >> ufid;
+//             myMap.remove(ufid);
+//         }  
+//     }
+
+//     return 0;
+// }
