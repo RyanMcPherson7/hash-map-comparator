@@ -5,6 +5,7 @@
 #include <stack>
 using namespace std;
 
+
 ////////////////////////////////////////////
 // LINKED LIST NODE CLASS
 ////////////////////////////////////////////
@@ -13,6 +14,7 @@ struct ListNode {
     ListNode* next;
     ListNode(const string& id, const string& name) : data(id, name), next(nullptr) {}
 };
+
 
 ////////////////////////////////////////////
 // HASH FUNCTION 
@@ -39,6 +41,7 @@ unsigned int hashFunction(char const *key, int table_size) {
 
     return hashCode % table_size;
 }
+
 
 ////////////////////////////////////////////
 // UNORDERED MAP CLASS
@@ -74,11 +77,6 @@ class UnorderedMap
                     pointer = rhs.pointer;
                     return *this;  
                 }
-
-                // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                // IDK THIS IS PROBABLY WRONG PLS FIX ME !!!!!!
-                // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
                 Iterator& operator++() { 
 
                     // move to right node
@@ -101,20 +99,6 @@ class UnorderedMap
                     bucketIndex = map->bucketCount - 1;
 
                     return *this;
-
-                    // if (!pointer->next && bucketIndex == map->bucketCount - 1) {
-                    //     for (int i = map->bucketCount - 1; i >= 0; i--)
-                    //         if (map->table[i]) {
-                    //             ListNode* slot = map->table[i];
-
-                    //             while (slot)
-                    //                 slot = slot->next;
-
-                    //             pointer = slot;
-                    //         }
-                    // }
-
-                    // return *this;
                 }
                 bool operator!=(Iterator const& rhs) { return this->pointer != rhs.pointer; }
                 bool operator==(Iterator const& rhs) { return this->pointer == rhs.pointer; }
@@ -137,6 +121,7 @@ UnorderedMap::UnorderedMap(unsigned int bucketCount, double loadFactor) {
         table[i] = nullptr;
 }
 
+
 UnorderedMap::~UnorderedMap() {
     delete [] table;
 }
@@ -148,7 +133,6 @@ UnorderedMap::~UnorderedMap() {
 UnorderedMap::Iterator UnorderedMap::begin() const {
     UnorderedMap::Iterator beginIter(this);
 
-    // for some bizzar reason, table[0] is not null despite not containing any items
     for (int i = 0; i < bucketCount; i++)
         if (table[i] != nullptr) {
             beginIter.bucketIndex = i;
@@ -162,22 +146,11 @@ UnorderedMap::Iterator UnorderedMap::begin() const {
 
 UnorderedMap::Iterator UnorderedMap::end() const {
     UnorderedMap::Iterator endIter(this);
-
-    // for (int i = bucketCount - 1; i >= 0; i--)
-    //     if (table[i]) {
-    //         ListNode* slot = table[i];
-
-    //         while (slot)
-    //             slot = slot->next;
-
-    //         endIter.bucketIndex = i;
-    //         endIter.pointer = slot;
-    //     }
-
     endIter.pointer = nullptr;
 
     return endIter;
 }
+
 
 ////////////////////////////////////////////
 // UOM [] OPERATOR (INSERT / GET)
@@ -238,6 +211,7 @@ string& UnorderedMap::operator[] (string const& key) {
     return slot->next->data.second;
 }
 
+
 ////////////////////////////////////////////
 // UOM REHASH MAP
 ////////////////////////////////////////////
@@ -282,6 +256,7 @@ void UnorderedMap::rehash() {
     }
 }
 
+
 ////////////////////////////////////////////
 // UOM REMOVE KEY
 ////////////////////////////////////////////
@@ -313,6 +288,7 @@ void UnorderedMap::remove(string const& key) {
     }
 }
 
+
 ////////////////////////////////////////////
 // UOM GETTERS
 ////////////////////////////////////////////
@@ -323,38 +299,6 @@ unsigned int UnorderedMap::size() {
 double UnorderedMap::loadFactor() {
     return (double)numKeys / (double)bucketCount;
 }
-
-
-
-
-// // ====================================================
-// // ====================================================
-// // ====================================================
-// // ====================================================
-// // ====================================================
-// // ====================================================
-
-// int main() {
-
-//     UnorderedMap map(4, 0.75);
-//     map["key1"] = "val1";
-//     map["key2"] = "val2";
-//     map["key3"] = "val3";
-//     map["key4"] = "val4";
-//     map["key5"] = "val5";
-//     map["key6"] = "val6";
-    
-//     cout << map.loadFactor() << endl;
-
-
-//     // UnorderedMap::Iterator iter2 = map.begin();
-//     // ++iter;
-
-    
-
-//     return 0;
-// }
-
 
 
 ////////////////////////////////////////////
