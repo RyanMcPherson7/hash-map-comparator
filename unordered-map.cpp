@@ -190,6 +190,14 @@ string& UnorderedMap::operator[] (string const& key) {
     if (!table[hashCode]) {
         numKeys++;
         table[hashCode] = new ListNode(key, "");
+
+        // rehashing if load factor surpassed
+        if ((double)numKeys / (double)bucketCount >= LF) {
+            rehash();
+            unsigned int newHashCode = hashFunction(key.c_str(), bucketCount);
+            return table[newHashCode]->data.second;
+        }
+
         return table[hashCode]->data.second;
     }
     
@@ -328,20 +336,15 @@ double UnorderedMap::loadFactor() {
 
 // int main() {
 
-//     UnorderedMap map(1, 0.75);
+//     UnorderedMap map(4, 0.75);
 //     map["key1"] = "val1";
-//     // map.remove("key1");
 //     map["key2"] = "val2";
 //     map["key3"] = "val3";
 //     map["key4"] = "val4";
+//     map["key5"] = "val5";
+//     map["key6"] = "val6";
     
-//     UnorderedMap::Iterator iter = map.begin();
-//     ++iter;
-//     ++iter;
-//     ++iter;
-//     // ++iter;
-
-//     cout << (*iter).first << endl;
+//     cout << map.loadFactor() << endl;
 
 
 //     // UnorderedMap::Iterator iter2 = map.begin();
