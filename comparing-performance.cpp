@@ -6,6 +6,7 @@
 #include <cctype>
 #include <vector>
 #include <queue>
+#include <chrono>
 using namespace std;
 
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -347,7 +348,7 @@ class Avltree{
     Avlnode* balanceTree(Avlnode *problem);
     void findHeight(Avlnode *current);
 
-    Avlnode* insertHelper(Avlnode* current, string &name, int &id, int &count, bool &isSuccessful);
+    Avlnode* insertHelper(Avlnode* current, string &name, int id, int count, bool &isSuccessful);
     Avlnode* removeHelper(Avlnode *current, int id, bool &isSuccessful);
     Avlnode* removeInOrderHelper(Avlnode *current, int &n);
     Avlnode* deleteNode(Avlnode *current);
@@ -432,7 +433,7 @@ class Avltree{
 
         return isSuccessful;
     }
-    Avlnode* Avltree::insertHelper(Avlnode* current, string &name, int &id, int &count, bool &isSuccessful){
+    Avlnode* Avltree::insertHelper(Avlnode* current, string &name, int id, int count, bool &isSuccessful){
 
         if (current == nullptr){
             // cout << "successful" << endl;
@@ -1069,14 +1070,101 @@ bool OrderedMap::remove(const std::string ID)
 
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// FUNCTION TO COMPARE PERFORMANCE
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+void compareOrderAndUnorder (const int numEntries) {
+
+    UnorderedMap* unMap = new UnorderedMap(1, 0.75);
+    OrderedMap* orMap = new OrderedMap;
+
+    // ==================
+    // INSERTING
+    // ==================
+    // UNORDERED MAP
+    auto start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < numEntries; i++) {
+        (*unMap)[to_string(i)] = "test";
+    }
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<float> duration = end - start;
+    cout << "Inserting " << numEntries << " items into Unordered Map took: " << duration.count() << " seconds" << endl;
+    // ORDERED MAP
+    start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < numEntries; i++) {
+        string test = "test";
+        orMap->insert(to_string(i), test);
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = end - start;
+    cout << "Inserting " << numEntries << " items into Ordered Map took: " << duration.count() << " seconds" << endl;
+
+    // ==================
+    // SEARCHING
+    // ==================
+    // UNORDERED MAP
+    start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < numEntries; i++) {
+        (*unMap)[to_string(rand() % numEntries)];
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = end - start;
+    cout << "Searching " << numEntries << " items in Unordered Map took: " << duration.count() << " seconds" << endl;
+
+    // ORDERED MAP
+    start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < numEntries; i++) {
+        orMap->search(to_string(rand() % numEntries));
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = end - start;
+    cout << "Searching " << numEntries << " items in Ordered Map took: " << duration.count() << " seconds" << endl;
+
+    // ==================
+    // REMOVING
+    // ==================
+    // UNORDERED MAP
+    start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < numEntries; i++) {
+        unMap->remove(to_string(rand() % numEntries));
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = end - start; 
+    cout << "Removing ~" << numEntries << " items in Unordered Map took: " << duration.count() << " seconds" << endl;
+
+    // ORDERED MAP
+    start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < numEntries; i++) {
+        orMap->remove(to_string(rand() % numEntries));
+    }
+    end = chrono::high_resolution_clock::now();
+    duration = end - start;
+    cout << "Removing ~" << numEntries << " items in Ordered Map took: " << duration.count() << " seconds" << endl;
+
+    // ==================
+    // CLEANING
+    // ==================
+    delete unMap;
+    delete orMap;
+    cout << endl;
+}
+
+
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 // MAIN TO COMPARE PERFORMANCE
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 int main() {
 
-
-
+    // compareOrderAndUnorder(1000);
+    // compareOrderAndUnorder(10000);
+    compareOrderAndUnorder(100000);
+    compareOrderAndUnorder(200000);
+    compareOrderAndUnorder(300000);
+    compareOrderAndUnorder(400000);
+    compareOrderAndUnorder(500000);
 
     return 0;
 }
+
