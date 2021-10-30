@@ -6,6 +6,11 @@
 using namespace std;
 using std::string;
 
+///////////////////////////////////////
+// Avlnode and AvlTree were written by
+// another student NOT Ryan McPherson
+///////////////////////////////////////
+
 ////***** NODE CLASS DECLARATION
 class Avlnode{
     ////CONSTRUCTORS AND BASIC VARIABLES
