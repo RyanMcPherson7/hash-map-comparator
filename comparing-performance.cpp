@@ -1084,20 +1084,20 @@ void compareOrderAndUnorder (const int numEntries) {
     // UNORDERED MAP
     auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < numEntries; i++) {
-        (*unMap)[to_string(i)] = "test";
+        (*unMap)[to_string(rand() % numEntries * 2)] = "test";
     }
     auto end = chrono::high_resolution_clock::now();
     chrono::duration<float> duration = end - start;
-    cout << "Inserting " << numEntries << " items into Unordered Map took: " << duration.count() << " seconds" << endl;
+    cout << "Inserting ~" << numEntries << " items into Unordered Map took: " << duration.count() << " seconds" << endl;
     // ORDERED MAP
     start = chrono::high_resolution_clock::now();
     for (int i = 0; i < numEntries; i++) {
         string test = "test";
-        orMap->insert(to_string(i), test);
+        orMap->insert(to_string(rand() % numEntries * 2), test);
     }
     end = chrono::high_resolution_clock::now();
     duration = end - start;
-    cout << "Inserting " << numEntries << " items into Ordered Map took: " << duration.count() << " seconds" << endl;
+    cout << "Inserting ~" << numEntries << " items into Ordered Map took: " << duration.count() << " seconds" << endl;
 
     // ==================
     // SEARCHING
@@ -1105,20 +1105,20 @@ void compareOrderAndUnorder (const int numEntries) {
     // UNORDERED MAP
     start = chrono::high_resolution_clock::now();
     for (int i = 0; i < numEntries; i++) {
-        (*unMap)[to_string(rand() % numEntries)];
+        (*unMap)[to_string(rand() % numEntries * 2)];
     }
     end = chrono::high_resolution_clock::now();
     duration = end - start;
-    cout << "Searching " << numEntries << " items in Unordered Map took: " << duration.count() << " seconds" << endl;
+    cout << "Searching ~" << numEntries << " items in Unordered Map took: " << duration.count() << " seconds" << endl;
 
     // ORDERED MAP
     start = chrono::high_resolution_clock::now();
     for (int i = 0; i < numEntries; i++) {
-        orMap->search(to_string(rand() % numEntries));
+        orMap->search(to_string(rand() % numEntries * 2));
     }
     end = chrono::high_resolution_clock::now();
     duration = end - start;
-    cout << "Searching " << numEntries << " items in Ordered Map took: " << duration.count() << " seconds" << endl;
+    cout << "Searching ~" << numEntries << " items in Ordered Map took: " << duration.count() << " seconds" << endl;
 
     // ==================
     // REMOVING
@@ -1126,7 +1126,7 @@ void compareOrderAndUnorder (const int numEntries) {
     // UNORDERED MAP
     start = chrono::high_resolution_clock::now();
     for (int i = 0; i < numEntries; i++) {
-        unMap->remove(to_string(rand() % numEntries));
+        unMap->remove(to_string(rand() % numEntries * 2));
     }
     end = chrono::high_resolution_clock::now();
     duration = end - start; 
@@ -1135,7 +1135,7 @@ void compareOrderAndUnorder (const int numEntries) {
     // ORDERED MAP
     start = chrono::high_resolution_clock::now();
     for (int i = 0; i < numEntries; i++) {
-        orMap->remove(to_string(rand() % numEntries));
+        orMap->remove(to_string(rand() % numEntries * 2));
     }
     end = chrono::high_resolution_clock::now();
     duration = end - start;
@@ -1157,8 +1157,8 @@ void compareOrderAndUnorder (const int numEntries) {
 // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 int main() {
 
-    // compareOrderAndUnorder(1000);
-    // compareOrderAndUnorder(10000);
+    compareOrderAndUnorder(1000);
+    compareOrderAndUnorder(10000);
     compareOrderAndUnorder(100000);
     compareOrderAndUnorder(200000);
     compareOrderAndUnorder(300000);
