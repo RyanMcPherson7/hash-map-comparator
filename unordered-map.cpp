@@ -144,11 +144,10 @@ UnorderedMap::Iterator UnorderedMap::begin() const {
     return beginIter;
 }
 
+// the end iterator will be signified by an iterator 
+// with a pointer pointing to nullptr
 UnorderedMap::Iterator UnorderedMap::end() const {
-    UnorderedMap::Iterator endIter(this);
-    endIter.pointer = nullptr;
-
-    return endIter;
+    return UnorderedMap::Iterator(this);
 }
 
 
