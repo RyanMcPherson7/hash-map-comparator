@@ -268,8 +268,10 @@ void UnorderedMap::remove(string const& key) {
 
     // if key is head of list 
     if (table[hashCode]->data.first == key) {
-        delete table[hashCode];
-        table[hashCode] = nullptr;
+
+        ListNode* temp = table[hashCode];
+        table[hashCode] = temp->next;
+        delete temp;
         numKeys--;
     }
     // removing from body of list
